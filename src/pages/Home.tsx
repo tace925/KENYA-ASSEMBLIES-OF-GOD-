@@ -1,17 +1,29 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, CalendarDays, Clock3, MapPin, Play } from "lucide-react";
-import { church, galleryImages, leadership, schedule } from "../data/content";
+import { church, galleryImages as defaultGallery, leadership as defaultLeadership, schedule as defaultSchedule } from "../data/content";
 import { store } from "../lib/storage";
 import { CTABand, reveal, SectionHeading, Stat } from "../components/ui";
 
 export default function Home() {
   const settings = store.getSettings();
   const notices = store.getNotices().slice(0, 3);
+
+  // Prefer Admin data
+  const storedSchedule = store.getSchedule();
+  const schedule = storedSchedule.length > 0 ? storedSchedule : defaultSchedule;
+
+  const storedLeaders = store.getLeadership();
+  const leaders = storedLeaders.length > 0 ? storedLeaders : defaultLeadership.senior;
+
+  const storedGallery = store.getGallery();
+  const gallery = storedGallery.length > 0 ? storedGallery : defaultGallery;
+
   const sermon = schedule[0];
 
   return (
     <>
+      {/* Hero */}
       <section className="relative min-h-[100svh] overflow-hidden">
         <motion.div
           className="absolute inset-0 bg-cover bg-center"
@@ -42,7 +54,7 @@ export default function Home() {
             transition={{ delay: 0.4 }}
             className="mt-6 max-w-xl text-lg leading-8 text-cream/70"
           >
-            Welcome to {church.name}, Katoloni — a place to encounter God, grow in faith and find family in Christ.
+            Welcome to {settings.churchName || church.name}, Katoloni — a place to encounter God, grow in faith and find family in Christ.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -63,6 +75,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Stats */}
       <section className="border-b border-white/10 bg-ink py-14">
         <div className="container grid grid-cols-2 gap-8 lg:grid-cols-4">
           <Stat value="1" label="House of Prayer" />
@@ -72,6 +85,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Leadership */}
       <section className="section bg-void">
         <div className="container grid gap-12 lg:grid-cols-2 lg:items-center">
           <SectionHeading
@@ -85,8 +99,8 @@ export default function Home() {
             text="We are a prayer-centered church in Katoloni — rooted in Scripture, warm in welcome, and serious about discipleship, family and community transformation."
           />
           <motion.div {...reveal} className="grid gap-4 sm:grid-cols-3">
-            {leadership.senior.map((p) => (
-              <div key={p.initials} className="card p-6">
+            {leaders.slice(0, 3).map((p) => (
+              <div key={p.id || p.initials} className="card p-6">
                 <div className="font-serif text-5xl text-gold">{p.initials}</div>
                 <h3 className="mt-4 font-serif text-xl">{p.role}</h3>
                 <p className="mt-2 text-sm leading-6 text-mist">{p.focus}</p>
@@ -96,6 +110,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Ministries preview (static for now) */}
       <section className="section bg-cream text-ink">
         <div className="container">
           <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
@@ -123,6 +138,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Service times */}
       <section className="section bg-ink">
         <div className="container grid gap-12 lg:grid-cols-[0.9fr_1.1fr]">
           <div>
@@ -134,9 +150,11 @@ export default function Home() {
               <div className="flex gap-3 text-sm text-mist">
                 <MapPin className="text-gold" size={18} /> {church.location}
               </div>
-              <div className="flex gap-3 text-sm text-mist">
-                <Clock3 className="text-gold" size={18} /> Main gathering from {sermon.time}
-              </div>
+              {sermon && (
+                <div className="flex gap-3 text-sm text-mist">
+                  <Clock3 className="text-gold" size={18} /> Main gathering from {sermon.time}
+                </div>
+              )}
               <Link to="/services" className="btn-line mt-4">
                 Full Weekly Schedule
               </Link>
@@ -153,7 +171,7 @@ export default function Home() {
               </thead>
               <tbody>
                 {schedule.slice(0, 5).map((row) => (
-                  <tr key={`${row.day}-${row.item}`}>
+                  <tr key={row.id || `${row.day}-${row.item}`}>
                     <td>{row.day}</td>
                     <td>{row.time}</td>
                     <td>{row.item}</td>
@@ -165,6 +183,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Latest word */}
       <section className="section bg-void">
         <div className="container grid gap-10 lg:grid-cols-2 lg:items-center">
           <motion.div {...reveal} className="relative aspect-video overflow-hidden border border-white/10">
@@ -193,6 +212,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Notices */}
       <section className="section bg-panel">
         <div className="container">
           <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
@@ -211,10 +231,14 @@ export default function Home() {
                 </div>
               </article>
             ))}
+            {notices.length === 0 && (
+              <p className="py-8 text-mist">No notices yet.</p>
+            )}
           </div>
         </div>
       </section>
 
+      {/* Gallery */}
       <section className="section bg-cream text-ink">
         <div className="container">
           <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
@@ -224,9 +248,13 @@ export default function Home() {
             </Link>
           </div>
           <div className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-4">
-            {galleryImages.slice(0, 4).map((img) => (
-              <div key={img.src} className="aspect-[4/3] overflow-hidden">
-                <img src={img.src} alt={img.caption} className="h-full w-full object-cover transition duration-500 hover:scale-105" />
+            {gallery.slice(0, 4).map((img) => (
+              <div key={img.id || img.src} className="aspect-[4/3] overflow-hidden">
+                <img
+                  src={img.src}
+                  alt={img.caption}
+                  className="h-full w-full object-cover transition duration-500 hover:scale-105"
+                />
               </div>
             ))}
           </div>

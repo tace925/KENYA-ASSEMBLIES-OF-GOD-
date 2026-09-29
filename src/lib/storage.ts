@@ -92,20 +92,46 @@ export type Testimony = {
 };
 
 export type SiteSettings = {
+  // Existing
   announcement: string;
-  heroImage: string;
+  heroImage: string;          // Home hero
   bishopPhone: string;
   bishopEmail: string;
   bookingNotice: string;
   bookingPolicy: string;
 
-  // Branding / Header
-  logoText: string;          // e.g. "MG"
-  churchName: string;        // e.g. "MOUNTAIN OF THE LORD"
-  churchSubtitle: string;    // e.g. "Prayer Center, Katoloni"
-
-  // Footer
+  // Branding
+  logoText: string;
+  churchName: string;
+  churchSubtitle: string;
   footerDescription: string;
+
+  // Hero images for every page
+  heroAbout: string;
+  heroServices: string;
+  heroMinistries: string;
+  heroHomeCells: string;
+  heroGallery: string;
+  heroConfessions: string;
+  heroNotices: string;
+  heroProject: string;
+  heroTour: string;
+  heroContact: string;
+  heroPrayer: string;
+  heroBooking: string;
+  heroLibrary: string;
+  heroWall: string;
+
+  // Project page content
+  projectTitle: string;
+  projectSubtitle: string;
+  projectPhase1Title: string;
+  projectPhase1Desc: string;
+  projectPhase2Title: string;
+  projectPhase2Desc: string;
+  projectPhase3Title: string;
+  projectPhase3Desc: string;
+  projectSupportText: string;
 };
 
 export type Ministry = {
@@ -220,13 +246,37 @@ const defaultSettings: SiteSettings = {
   bookingNotice: "Please pay via M-Pesa and keep your transaction code.",
   bookingPolicy: "Bookings are confirmed after payment verification. Cancellation must be done 24 hours before check-in.",
 
-  // Branding
   logoText: "MG",
   churchName: "MOUNTAIN OF THE LORD",
   churchSubtitle: "Prayer Center, Katoloni",
-
-  // Footer
   footerDescription: "a faith community devoted to prayer, the Word and serving Katoloni with the love of Jesus Christ.",
+
+  // Hero images (same defaults for now – Admin can change)
+  heroAbout: "https://images.pexels.com/photos/10373537/pexels-photo-10373537.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
+  heroServices: "https://images.pexels.com/photos/36425622/pexels-photo-36425622.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
+  heroMinistries: "https://images.pexels.com/photos/13908967/pexels-photo-13908967.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
+  heroHomeCells: "https://images.pexels.com/photos/13908967/pexels-photo-13908967.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
+  heroGallery: "https://images.pexels.com/photos/36425621/pexels-photo-36425621.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
+  heroConfessions: "https://images.pexels.com/photos/36425621/pexels-photo-36425621.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
+  heroNotices: "https://images.pexels.com/photos/13963623/pexels-photo-13963623.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
+  heroProject: "https://images.pexels.com/photos/34123302/pexels-photo-34123302.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
+  heroTour: "https://images.pexels.com/photos/28896493/pexels-photo-28896493.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
+  heroContact: "https://images.pexels.com/photos/13963623/pexels-photo-13963623.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
+  heroPrayer: "https://images.pexels.com/photos/35266419/pexels-photo-35266419.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
+  heroBooking: "https://images.pexels.com/photos/36425621/pexels-photo-36425621.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
+  heroLibrary: "https://images.pexels.com/photos/36425621/pexels-photo-36425621.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
+  heroWall: "https://images.pexels.com/photos/35266419/pexels-photo-35266419.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
+
+  // Project page
+  projectTitle: "Building a home for generations.",
+  projectSubtitle: "We are preparing a lasting place of worship, prayer and service for Katoloni. Every prayer, gift and willing hand helps build the vision.",
+  projectPhase1Title: "Foundation",
+  projectPhase1Desc: "Site preparation, structural works and the base that carries the vision.",
+  projectPhase2Title: "Sanctuary",
+  projectPhase2Desc: "A worship hall designed for prayer, teaching and multi-generational gatherings.",
+  projectPhase3Title: "Ministry spaces",
+  projectPhase3Desc: "Rooms for counselling, children, media, guests and community service.",
+  projectSupportText: "To give toward the building fund or partner as a ministry, contact the church office or reach the bishop's desk.",
 };
 
 export const store = {
@@ -388,11 +438,9 @@ export const store = {
 
   // Settings
   getSettings(): SiteSettings {
-    return read(KEYS.settings, defaultSettings);
-  },
-  saveSettings(s: SiteSettings) {
-    write(KEYS.settings, s);
-  },
+  const saved = read(KEYS.settings, {} as Partial<SiteSettings>);
+  return { ...defaultSettings, ...saved };
+ },
 
   // Content
   getMinistries(): Ministry[] {

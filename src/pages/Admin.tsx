@@ -1179,109 +1179,176 @@ function SettingsPanel({ settings, onChange }: { settings: SiteSettings; onChang
     onChange();
   };
 
+  // Handle image upload → convert to base64 data URL
+  const handleUpload = (field: keyof SiteSettings, file: File | null) => {
+    if (!file) return;
+    if (file.size > 1.5 * 1024 * 1024) {
+      alert("Image is too large. Please use an image under 1.5 MB for now (localStorage limit).");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      setForm((prev) => ({ ...prev, [field]: reader.result as string }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const HeroField = ({
+    label,
+    field,
+  }: {
+    label: string;
+    field: keyof SiteSettings;
+  }) => (
+    <div className="space-y-2 border-b border-white/5 pb-5">
+      <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-mist">{label}</p>
+      <input
+        className="field-input"
+        value={(form[field] as string) || ""}
+        onChange={(e) => setForm({ ...form, [field]: e.target.value })}
+        placeholder="https://... or upload below"
+      />
+      <div className="flex flex-wrap items-center gap-3">
+        <label className="btn-line !min-h-9 !px-3 cursor-pointer">
+          Upload from computer
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => handleUpload(field, e.target.files?.[0] || null)}
+          />
+        </label>
+        {(form[field] as string) && (
+          <img
+            src={form[field] as string}
+            alt="preview"
+            className="h-16 w-28 object-cover border border-white/10"
+          />
+        )}
+      </div>
+    </div>
+  );
+
   return (
-    <section className="max-w-2xl">
+    <section className="max-w-3xl">
       <h2 className="font-serif text-4xl">Site Settings</h2>
 
       <form onSubmit={onSave} className="mt-8 space-y-8">
-        {/* Branding / Header */}
+        {/* Branding */}
         <div className="border border-white/10 p-6 space-y-4">
           <h3 className="font-serif text-2xl text-gold">Header / Logo</h3>
-
           <label className="field">
             Logo text (inside diamond)
-            <input
-              className="field-input"
-              value={form.logoText || ""}
-              onChange={(e) => setForm({ ...form, logoText: e.target.value })}
-              placeholder="MG"
-            />
+            <input className="field-input" value={form.logoText || ""} onChange={(e) => setForm({ ...form, logoText: e.target.value })} />
           </label>
-
           <label className="field">
-            Church name (main heading)
-            <input
-              className="field-input"
-              value={form.churchName || ""}
-              onChange={(e) => setForm({ ...form, churchName: e.target.value })}
-              placeholder="MOUNTAIN OF THE LORD"
-            />
+            Church name
+            <input className="field-input" value={form.churchName || ""} onChange={(e) => setForm({ ...form, churchName: e.target.value })} />
           </label>
-
           <label className="field">
-            Subtitle under the name
-            <input
-              className="field-input"
-              value={form.churchSubtitle || ""}
-              onChange={(e) => setForm({ ...form, churchSubtitle: e.target.value })}
-              placeholder="Prayer Center, Katoloni"
-            />
+            Subtitle
+            <input className="field-input" value={form.churchSubtitle || ""} onChange={(e) => setForm({ ...form, churchSubtitle: e.target.value })} />
           </label>
         </div>
 
         {/* Footer */}
         <div className="border border-white/10 p-6 space-y-4">
           <h3 className="font-serif text-2xl text-gold">Footer</h3>
-
           <label className="field">
             Footer description
-            <textarea
-              className="field-input resize-none"
-              rows={3}
-              value={form.footerDescription || ""}
-              onChange={(e) => setForm({ ...form, footerDescription: e.target.value })}
-              placeholder="a faith community devoted to prayer..."
-            />
+            <textarea className="field-input resize-none" rows={3} value={form.footerDescription || ""} onChange={(e) => setForm({ ...form, footerDescription: e.target.value })} />
           </label>
         </div>
 
         {/* General */}
         <div className="border border-white/10 p-6 space-y-4">
           <h3 className="font-serif text-2xl text-gold">General</h3>
-
           <label className="field">
             Bishop / office phone
-            <input
-              className="field-input"
-              value={form.bishopPhone || ""}
-              onChange={(e) => setForm({ ...form, bishopPhone: e.target.value })}
-            />
+            <input className="field-input" value={form.bishopPhone || ""} onChange={(e) => setForm({ ...form, bishopPhone: e.target.value })} />
           </label>
-
           <label className="field">
             Public email
-            <input
-              className="field-input"
-              value={form.bishopEmail || ""}
-              onChange={(e) => setForm({ ...form, bishopEmail: e.target.value })}
-            />
+            <input className="field-input" value={form.bishopEmail || ""} onChange={(e) => setForm({ ...form, bishopEmail: e.target.value })} />
           </label>
-
           <label className="field">
             Top announcement bar
-            <input
-              className="field-input"
-              value={form.announcement || ""}
-              onChange={(e) => setForm({ ...form, announcement: e.target.value })}
-            />
+            <input className="field-input" value={form.announcement || ""} onChange={(e) => setForm({ ...form, announcement: e.target.value })} />
           </label>
+        </div>
+
+        {/* Hero Images */}
+        <div className="border border-white/10 p-6 space-y-5">
+          <h3 className="font-serif text-2xl text-gold">Hero Images (all pages)</h3>
+          <p className="text-sm text-mist">Paste a URL or upload from your computer. Uploaded images are stored locally until you move to Supabase.</p>
+
+          <HeroField label="Home page" field="heroImage" />
+          <HeroField label="About page" field="heroAbout" />
+          <HeroField label="Services page" field="heroServices" />
+          <HeroField label="Ministries page" field="heroMinistries" />
+          <HeroField label="Home Cells page" field="heroHomeCells" />
+          <HeroField label="Gallery page" field="heroGallery" />
+          <HeroField label="Confessions page" field="heroConfessions" />
+          <HeroField label="Notices page" field="heroNotices" />
+          <HeroField label="Project page" field="heroProject" />
+          <HeroField label="Tour page" field="heroTour" />
+          <HeroField label="Contact page" field="heroContact" />
+          <HeroField label="Prayer page" field="heroPrayer" />
+          <HeroField label="Booking page" field="heroBooking" />
+          <HeroField label="Library page" field="heroLibrary" />
+          <HeroField label="Katoloni Wall page" field="heroWall" />
+        </div>
+
+        {/* Project Content */}
+        <div className="border border-white/10 p-6 space-y-4">
+          <h3 className="font-serif text-2xl text-gold">Project Page Content</h3>
 
           <label className="field">
-            Home hero background image URL
-            <input
-              className="field-input"
-              value={form.heroImage || ""}
-              onChange={(e) => setForm({ ...form, heroImage: e.target.value })}
-            />
+            Project title
+            <input className="field-input" value={form.projectTitle || ""} onChange={(e) => setForm({ ...form, projectTitle: e.target.value })} />
+          </label>
+          <label className="field">
+            Project subtitle
+            <textarea className="field-input resize-none" rows={3} value={form.projectSubtitle || ""} onChange={(e) => setForm({ ...form, projectSubtitle: e.target.value })} />
           </label>
 
-          {form.heroImage && (
-            <img
-              src={form.heroImage}
-              alt="Hero preview"
-              className="mt-2 h-40 w-full object-cover opacity-80"
-            />
-          )}
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="field">
+              Phase 1 title
+              <input className="field-input" value={form.projectPhase1Title || ""} onChange={(e) => setForm({ ...form, projectPhase1Title: e.target.value })} />
+            </label>
+            <label className="field">
+              Phase 1 description
+              <textarea className="field-input resize-none" rows={2} value={form.projectPhase1Desc || ""} onChange={(e) => setForm({ ...form, projectPhase1Desc: e.target.value })} />
+            </label>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="field">
+              Phase 2 title
+              <input className="field-input" value={form.projectPhase2Title || ""} onChange={(e) => setForm({ ...form, projectPhase2Title: e.target.value })} />
+            </label>
+            <label className="field">
+              Phase 2 description
+              <textarea className="field-input resize-none" rows={2} value={form.projectPhase2Desc || ""} onChange={(e) => setForm({ ...form, projectPhase2Desc: e.target.value })} />
+            </label>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="field">
+              Phase 3 title
+              <input className="field-input" value={form.projectPhase3Title || ""} onChange={(e) => setForm({ ...form, projectPhase3Title: e.target.value })} />
+            </label>
+            <label className="field">
+              Phase 3 description
+              <textarea className="field-input resize-none" rows={2} value={form.projectPhase3Desc || ""} onChange={(e) => setForm({ ...form, projectPhase3Desc: e.target.value })} />
+            </label>
+          </div>
+
+          <label className="field">
+            Support text (bottom paragraph)
+            <textarea className="field-input resize-none" rows={3} value={form.projectSupportText || ""} onChange={(e) => setForm({ ...form, projectSupportText: e.target.value })} />
+          </label>
         </div>
 
         <button type="submit" className="btn-gold">
