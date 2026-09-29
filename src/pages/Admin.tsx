@@ -917,13 +917,17 @@ function HomeCellsPanel({ items, onChange }: { items: HomeCell[]; onChange: () =
   const onAdd = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
-    const list = [...items, {
-      id: uid("cell"),
-      area: String(fd.get("area")),
-      day: String(fd.get("day")),
-      leader: String(fd.get("leader")),
-      focus: String(fd.get("focus")),
-    }];
+    const list = [
+      ...items,
+      {
+        id: uid("cell"),
+        area: String(fd.get("area")),
+        day: String(fd.get("day")),
+        leader: String(fd.get("leader")),
+        focus: String(fd.get("focus")),
+        phone: String(fd.get("phone") || ""),
+      },
+    ];
     store.saveHomeCells(list);
     e.currentTarget.reset();
     onChange();
@@ -939,13 +943,32 @@ function HomeCellsPanel({ items, onChange }: { items: HomeCell[]; onChange: () =
       <div>
         <h2 className="font-serif text-4xl">Home Cells</h2>
         <form onSubmit={onAdd} className="mt-6 space-y-4 border border-white/10 p-5">
-          <label className="field">Area *<input required name="area" className="field-input" /></label>
-          <label className="field">Day *<input required name="day" className="field-input" placeholder="Wednesday 6pm" /></label>
-          <label className="field">Leader *<input required name="leader" className="field-input" /></label>
-          <label className="field">Focus *<input required name="focus" className="field-input" /></label>
-          <button type="submit" className="btn-gold">Add home cell</button>
+          <label className="field">
+            Area *
+            <input required name="area" className="field-input" placeholder="Katoloni Estate" />
+          </label>
+          <label className="field">
+            Day *
+            <input required name="day" className="field-input" placeholder="Wednesday 6pm" />
+          </label>
+          <label className="field">
+            Leader *
+            <input required name="leader" className="field-input" />
+          </label>
+          <label className="field">
+            Phone number
+            <input name="phone" className="field-input" placeholder="07XX XXX XXX" />
+          </label>
+          <label className="field">
+            Focus *
+            <input required name="focus" className="field-input" placeholder="Prayer & Bible study" />
+          </label>
+          <button type="submit" className="btn-gold">
+            Add home cell
+          </button>
         </form>
       </div>
+
       <div className="space-y-3">
         {items.map((c) => (
           <article key={c.id} className="card p-5">
@@ -954,9 +977,16 @@ function HomeCellsPanel({ items, onChange }: { items: HomeCell[]; onChange: () =
                 <h3 className="font-serif text-2xl">{c.area}</h3>
                 <p className="text-sm text-gold">{c.day}</p>
                 <p className="mt-1 text-sm text-mist">Leader: {c.leader}</p>
+                {c.phone && <p className="text-sm text-mist">Phone: {c.phone}</p>}
                 <p className="text-sm text-mist">Focus: {c.focus}</p>
               </div>
-              <button type="button" className="btn-ghost !min-h-9 !px-3" onClick={() => remove(c.id)}>Delete</button>
+              <button
+                type="button"
+                className="btn-ghost !min-h-9 !px-3"
+                onClick={() => remove(c.id)}
+              >
+                Delete
+              </button>
             </div>
           </article>
         ))}
