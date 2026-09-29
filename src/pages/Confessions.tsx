@@ -19,7 +19,7 @@ export default function Confessions() {
           </>
         }
         subtitle="Manually curated weekly messages from the mountain. Add new entries from the admin portal as needed."
-        image="https://images.pexels.com/photos/36425621/pexels-photo-36425621.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000"
+        image={store.getSettings().heroConfessions || "https://images.pexels.com/photos/36425621/pexels-photo-36425621.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000"}
       />
 
       <section className="section bg-ink">

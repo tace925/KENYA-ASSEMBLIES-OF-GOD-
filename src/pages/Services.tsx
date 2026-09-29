@@ -23,7 +23,7 @@ export default function Services() {
           </>
         }
         subtitle="Sunday worship, midweek discipleship, home cells and nights of prayer — there is room for you in the rhythm of this house."
-        image="https://images.pexels.com/photos/36425622/pexels-photo-36425622.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000"
+       image={store.getSettings().heroServices || "https://images.pexels.com/photos/36425622/pexels-photo-36425622.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000"}
         actions={<Link to="/booking" className="btn-gold">Plan a Visit</Link>}
       />
 

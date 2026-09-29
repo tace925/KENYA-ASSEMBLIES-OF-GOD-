@@ -16,7 +16,7 @@ export default function Tour() {
           </>
         }
         subtitle="Whether this is your first visit or you are looking for a spiritual home, you will be welcomed with warmth."
-        image="https://images.pexels.com/photos/28896493/pexels-photo-28896493.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000"
+       image={store.getSettings().heroTour || "https://images.pexels.com/photos/28896493/pexels-photo-28896493.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000"}
       />
 
       <section className="bg-cream text-ink">

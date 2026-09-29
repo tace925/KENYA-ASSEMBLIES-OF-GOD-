@@ -23,7 +23,7 @@ export default function Notices() {
           </>
         }
         subtitle="Services, prayer nights, project updates and community announcements — all in one place."
-        image="https://images.pexels.com/photos/13963623/pexels-photo-13963623.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000"
+        image={store.getSettings().heroNotices || "https://images.pexels.com/photos/13963623/pexels-photo-13963623.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000"}
       />
 
       <section className="section bg-cream text-ink">

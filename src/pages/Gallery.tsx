@@ -22,7 +22,7 @@ export default function Gallery() {
           </>
         }
         subtitle="Worship nights, fellowships and moments from life at the mountain."
-        image="https://images.pexels.com/photos/36425621/pexels-photo-36425621.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000"
+       image={store.getSettings().heroGallery || "https://images.pexels.com/photos/36425621/pexels-photo-36425621.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000"}
       />
 
       <section className="section bg-void">

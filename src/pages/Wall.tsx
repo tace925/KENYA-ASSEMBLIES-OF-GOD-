@@ -43,7 +43,7 @@ export default function Wall() {
           </>
         }
         subtitle="A living record of prayers answered, lives restored and faith strengthened in our community."
-        image="https://images.pexels.com/photos/35266419/pexels-photo-35266419.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000"
+        image={store.getSettings().heroWall || "https://images.pexels.com/photos/35266419/pexels-photo-35266419.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000"}
       />
 
       <section className="section bg-void">

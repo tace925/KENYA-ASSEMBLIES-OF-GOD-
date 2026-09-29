@@ -19,7 +19,7 @@ export default function About() {
           </>
         }
         subtitle="Mountain of the Lord Prayer Center, Katoloni exists to host God's presence, disciple believers and serve our community with compassion."
-        image="https://images.pexels.com/photos/10373537/pexels-photo-10373537.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000"
+       image={store.getSettings().heroAbout || "https://images.pexels.com/photos/10373537/pexels-photo-10373537.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000"}
       />
 
       <section className="section bg-void">

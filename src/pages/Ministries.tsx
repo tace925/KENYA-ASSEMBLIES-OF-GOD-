@@ -20,7 +20,7 @@ export default function Ministries() {
           </>
         }
         subtitle="Every believer has a gift. Every gift has a place. Explore the ministries that keep Katoloni alive and fruitful."
-        image="https://images.pexels.com/photos/13908967/pexels-photo-13908967.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000"
+        image={store.getSettings().heroMinistries || "https://images.pexels.com/photos/13908967/pexels-photo-13908967.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000"}
       />
 
       <section className="section bg-void">

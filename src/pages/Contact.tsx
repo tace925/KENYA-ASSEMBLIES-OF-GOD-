@@ -39,7 +39,7 @@ export default function Contact() {
           </>
         }
         subtitle="Questions, visits, partnership or pastoral care — send a message and the team will respond."
-        image="https://images.pexels.com/photos/13963623/pexels-photo-13963623.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000"
+        image={store.getSettings().heroContact || "https://images.pexels.com/photos/13963623/pexels-photo-13963623.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000"}
       />
 
       <section className="section bg-void">

@@ -34,7 +34,7 @@ export default function Prayer() {
           </>
         }
         subtitle="Share a prayer request with the pastoral team. Mark it private if it should only be seen by leadership."
-        image="https://images.pexels.com/photos/35266419/pexels-photo-35266419.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000"
+      image={store.getSettings().heroPrayer || "https://images.pexels.com/photos/35266419/pexels-photo-35266419.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000"}
       />
 
       <section className="section bg-cream text-ink">
