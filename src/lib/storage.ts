@@ -98,6 +98,14 @@ export type SiteSettings = {
   bishopEmail: string;
   bookingNotice: string;
   bookingPolicy: string;
+
+  // Branding / Header
+  logoText: string;          // e.g. "MG"
+  churchName: string;        // e.g. "MOUNTAIN OF THE LORD"
+  churchSubtitle: string;    // e.g. "Prayer Center, Katoloni"
+
+  // Footer
+  footerDescription: string;
 };
 
 export type Ministry = {
@@ -211,6 +219,14 @@ const defaultSettings: SiteSettings = {
   bishopEmail: "office@mountainofthelord.org",
   bookingNotice: "Please pay via M-Pesa and keep your transaction code.",
   bookingPolicy: "Bookings are confirmed after payment verification. Cancellation must be done 24 hours before check-in.",
+
+  // Branding
+  logoText: "MG",
+  churchName: "MOUNTAIN OF THE LORD",
+  churchSubtitle: "Prayer Center, Katoloni",
+
+  // Footer
+  footerDescription: "a faith community devoted to prayer, the Word and serving Katoloni with the love of Jesus Christ.",
 };
 
 export const store = {

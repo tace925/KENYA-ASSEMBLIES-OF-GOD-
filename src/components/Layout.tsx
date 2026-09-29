@@ -15,17 +15,19 @@ import { church, navMain, navMore } from "../data/content";
 import { store } from "../lib/storage";
 
 function Logo() {
+  const settings = store.getSettings();
+
   return (
     <Link to="/" className="group flex items-center gap-3">
       <span className="logo-mark" aria-hidden>
-        <span>MG</span>
+        <span>{settings.logoText || "MG"}</span>
       </span>
       <span className="hidden leading-tight min-[480px]:block">
         <strong className="block text-[13px] font-semibold tracking-[0.14em] text-cream">
-          MOUNTAIN OF THE LORD
+          {settings.churchName || "MOUNTAIN OF THE LORD"}
         </strong>
         <span className="block text-[9px] font-semibold uppercase tracking-[0.28em] text-gold/70">
-          Prayer Center, Katoloni
+          {settings.churchSubtitle || "Prayer Center, Katoloni"}
         </span>
       </span>
     </Link>
@@ -36,13 +38,15 @@ export default function Layout() {
   const [open, setOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
-  const [settings] = useState(() => store.getSettings());
+  const [settings, setSettings] = useState(() => store.getSettings());
   const location = useLocation();
 
   useEffect(() => {
     setOpen(false);
     setMoreOpen(false);
     window.scrollTo(0, 0);
+    // Refresh settings every time the page changes
+    setSettings(store.getSettings());
   }, [location.pathname]);
 
   useEffect(() => {
@@ -167,8 +171,8 @@ export default function Layout() {
             <div>
               <Logo />
               <p className="mt-5 max-w-sm text-sm leading-7 text-mist">
-                {church.name} — a faith community devoted to prayer, the Word and serving Katoloni with the love of Jesus Christ.
-              </p>
+                {settings.churchName || church.name} — {settings.footerDescription}
+                </p>
               <a
                 href={`https://wa.me/${church.whatsapp}`}
                 target="_blank"

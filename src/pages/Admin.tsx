@@ -1151,28 +1151,112 @@ function SettingsPanel({ settings, onChange }: { settings: SiteSettings; onChang
 
   return (
     <section className="max-w-2xl">
-      <h2 className="font-serif text-4xl">Site settings</h2>
-      <form onSubmit={onSave} className="mt-8 space-y-4 border border-white/10 p-6">
-        <label className="field">
-          Bishop / office phone
-          <input className="field-input" value={form.bishopPhone} onChange={(e) => setForm({ ...form, bishopPhone: e.target.value })} />
-        </label>
-        <label className="field">
-          Public email
-          <input className="field-input" value={form.bishopEmail} onChange={(e) => setForm({ ...form, bishopEmail: e.target.value })} />
-        </label>
-        <label className="field">
-          Top announcement bar
-          <input className="field-input" value={form.announcement} onChange={(e) => setForm({ ...form, announcement: e.target.value })} />
-        </label>
-        <label className="field">
-          Hero background image URL
-          <input className="field-input" value={form.heroImage} onChange={(e) => setForm({ ...form, heroImage: e.target.value })} />
-        </label>
-        {form.heroImage && (
-          <img src={form.heroImage} alt="Hero preview" className="mt-2 h-40 w-full object-cover opacity-80" />
-        )}
-        <button type="submit" className="btn-gold">Save settings</button>
+      <h2 className="font-serif text-4xl">Site Settings</h2>
+
+      <form onSubmit={onSave} className="mt-8 space-y-8">
+        {/* Branding / Header */}
+        <div className="border border-white/10 p-6 space-y-4">
+          <h3 className="font-serif text-2xl text-gold">Header / Logo</h3>
+
+          <label className="field">
+            Logo text (inside diamond)
+            <input
+              className="field-input"
+              value={form.logoText || ""}
+              onChange={(e) => setForm({ ...form, logoText: e.target.value })}
+              placeholder="MG"
+            />
+          </label>
+
+          <label className="field">
+            Church name (main heading)
+            <input
+              className="field-input"
+              value={form.churchName || ""}
+              onChange={(e) => setForm({ ...form, churchName: e.target.value })}
+              placeholder="MOUNTAIN OF THE LORD"
+            />
+          </label>
+
+          <label className="field">
+            Subtitle under the name
+            <input
+              className="field-input"
+              value={form.churchSubtitle || ""}
+              onChange={(e) => setForm({ ...form, churchSubtitle: e.target.value })}
+              placeholder="Prayer Center, Katoloni"
+            />
+          </label>
+        </div>
+
+        {/* Footer */}
+        <div className="border border-white/10 p-6 space-y-4">
+          <h3 className="font-serif text-2xl text-gold">Footer</h3>
+
+          <label className="field">
+            Footer description
+            <textarea
+              className="field-input resize-none"
+              rows={3}
+              value={form.footerDescription || ""}
+              onChange={(e) => setForm({ ...form, footerDescription: e.target.value })}
+              placeholder="a faith community devoted to prayer..."
+            />
+          </label>
+        </div>
+
+        {/* General */}
+        <div className="border border-white/10 p-6 space-y-4">
+          <h3 className="font-serif text-2xl text-gold">General</h3>
+
+          <label className="field">
+            Bishop / office phone
+            <input
+              className="field-input"
+              value={form.bishopPhone || ""}
+              onChange={(e) => setForm({ ...form, bishopPhone: e.target.value })}
+            />
+          </label>
+
+          <label className="field">
+            Public email
+            <input
+              className="field-input"
+              value={form.bishopEmail || ""}
+              onChange={(e) => setForm({ ...form, bishopEmail: e.target.value })}
+            />
+          </label>
+
+          <label className="field">
+            Top announcement bar
+            <input
+              className="field-input"
+              value={form.announcement || ""}
+              onChange={(e) => setForm({ ...form, announcement: e.target.value })}
+            />
+          </label>
+
+          <label className="field">
+            Home hero background image URL
+            <input
+              className="field-input"
+              value={form.heroImage || ""}
+              onChange={(e) => setForm({ ...form, heroImage: e.target.value })}
+            />
+          </label>
+
+          {form.heroImage && (
+            <img
+              src={form.heroImage}
+              alt="Hero preview"
+              className="mt-2 h-40 w-full object-cover opacity-80"
+            />
+          )}
+        </div>
+
+        <button type="submit" className="btn-gold">
+          Save all settings
+        </button>
       </form>
     </section>
   );
