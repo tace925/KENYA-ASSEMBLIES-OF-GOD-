@@ -1,9 +1,17 @@
 import { Link } from "react-router-dom";
-import { homeCells, schedule } from "../data/content";
+import { homeCells as defaultCells, schedule as defaultSchedule } from "../data/content";
+import { store } from "../lib/storage";
 import { CTABand, PageHero, reveal, SectionHeading } from "../components/ui";
 import { motion } from "framer-motion";
 
 export default function Services() {
+  // Prefer Admin data, fall back to original content
+  const storedSchedule = store.getSchedule();
+  const schedule = storedSchedule.length > 0 ? storedSchedule : defaultSchedule;
+
+  const storedCells = store.getHomeCells();
+  const cells = storedCells.length > 0 ? storedCells : defaultCells;
+
   return (
     <>
       <PageHero
@@ -33,7 +41,7 @@ export default function Services() {
               </thead>
               <tbody>
                 {schedule.map((row) => (
-                  <tr key={`${row.day}-${row.time}-${row.item}`}>
+                  <tr key={row.id || `${row.day}-${row.time}-${row.item}`}>
                     <td className="font-semibold">{row.day}</td>
                     <td>{row.time}</td>
                     <td>{row.item}</td>
@@ -42,6 +50,10 @@ export default function Services() {
               </tbody>
             </table>
           </motion.div>
+
+          {schedule.length === 0 && (
+            <p className="mt-6 text-stone-500">No schedule items yet.</p>
+          )}
         </div>
       </section>
 
@@ -54,7 +66,12 @@ export default function Services() {
           />
           <div className="grid gap-4">
             {["Prayer Summits", "Leadership Training", "Family & Marriage Forums", "Youth Camps", "Community Outreach"].map((item, i) => (
-              <motion.div key={item} {...reveal} transition={{ ...reveal.transition, delay: i * 0.04 }} className="card flex items-center justify-between px-5 py-4">
+              <motion.div
+                key={item}
+                {...reveal}
+                transition={{ ...reveal.transition, delay: i * 0.04 }}
+                className="card flex items-center justify-between px-5 py-4"
+              >
                 <span className="font-serif text-xl">{item}</span>
                 <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-gold">Seasonal</span>
               </motion.div>
@@ -72,11 +89,19 @@ export default function Services() {
             </Link>
           </div>
           <div className="mt-10 grid gap-4 md:grid-cols-2">
-            {homeCells.map((cell) => (
-              <article key={cell.area} className="card p-6">
+            {cells.map((cell) => (
+              <article key={cell.id || cell.area} className="card p-6">
                 <h3 className="font-serif text-2xl">{cell.area}</h3>
                 <p className="mt-2 text-sm text-gold">{cell.day}</p>
                 <p className="mt-3 text-sm leading-6 text-mist">Leader: {cell.leader}</p>
+                {cell.phone && (
+                  <p className="mt-1 text-sm text-mist">
+                    Phone:{" "}
+                    <a href={`tel:${cell.phone}`} className="text-gold hover:underline">
+                      {cell.phone}
+                    </a>
+                  </p>
+                )}
                 <p className="mt-1 text-sm text-mist">Focus: {cell.focus}</p>
               </article>
             ))}

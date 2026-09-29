@@ -1,9 +1,13 @@
 import { Play } from "lucide-react";
-import { confessions } from "../data/content";
+import { confessions as defaultConfessions } from "../data/content";
+import { store } from "../lib/storage";
 import { PageHero, reveal, SectionHeading } from "../components/ui";
 import { motion } from "framer-motion";
 
 export default function Confessions() {
+  const stored = store.getConfessions();
+  const list = stored.length > 0 ? stored : defaultConfessions;
+
   return (
     <>
       <PageHero
@@ -21,13 +25,23 @@ export default function Confessions() {
       <section className="section bg-ink">
         <div className="container">
           <SectionHeading eyebrow="Watch" title="Recent confessions" />
+
           <div className="mt-12 grid gap-4">
-            {confessions.map((c, i) => (
-              <motion.article key={c.title} {...reveal} transition={{ ...reveal.transition, delay: i * 0.05 }} className="card flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
+            {list.map((c, i) => (
+              <motion.article
+                key={c.id || c.title + i}
+                {...reveal}
+                transition={{ ...reveal.transition, delay: i * 0.05 }}
+                className="card flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between"
+              >
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-gold">{c.week}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-gold">
+                    {c.week}
+                  </p>
                   <h3 className="mt-2 font-serif text-2xl sm:text-3xl">{c.title}</h3>
-                  <p className="mt-2 text-sm text-mist">{c.speaker} · {c.duration}</p>
+                  <p className="mt-2 text-sm text-mist">
+                    {c.speaker} · {c.duration}
+                  </p>
                 </div>
                 <button type="button" className="btn-line">
                   <Play size={14} fill="currentColor" /> Play message
@@ -35,6 +49,10 @@ export default function Confessions() {
               </motion.article>
             ))}
           </div>
+
+          {list.length === 0 && (
+            <p className="mt-10 text-mist">No confessions listed yet. Admin can add them from the dashboard.</p>
+          )}
         </div>
       </section>
     </>

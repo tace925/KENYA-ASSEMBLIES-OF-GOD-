@@ -1,8 +1,13 @@
-import { leadership, values } from "../data/content";
+import { leadership as defaultLeadership, values } from "../data/content";
+import { store } from "../lib/storage";
 import { CTABand, PageHero, reveal, SectionHeading, Stat } from "../components/ui";
 import { motion } from "framer-motion";
 
 export default function About() {
+  // Prefer Admin leadership data. Fall back to original if none exist yet.
+  const stored = store.getLeadership();
+  const leaders = stored.length > 0 ? stored : defaultLeadership.senior;
+
   return (
     <>
       <PageHero
@@ -46,7 +51,12 @@ export default function About() {
           <SectionHeading light eyebrow="Core values" title="What shapes us" />
           <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {values.map((v, i) => (
-              <motion.div key={v.title} {...reveal} transition={{ ...reveal.transition, delay: i * 0.05 }} className="card-cream p-6">
+              <motion.div
+                key={v.title}
+                {...reveal}
+                transition={{ ...reveal.transition, delay: i * 0.05 }}
+                className="card-cream p-6"
+              >
                 <span className="font-serif text-4xl text-gold-dark/40">0{i + 1}</span>
                 <h3 className="mt-3 font-serif text-2xl">{v.title}</h3>
                 <p className="mt-3 text-sm leading-6 text-stone-600">{v.text}</p>
@@ -56,12 +66,14 @@ export default function About() {
         </div>
       </section>
 
+      {/* Leadership – now connected to Admin */}
       <section className="section bg-ink">
         <div className="container">
           <SectionHeading eyebrow="Leadership" title="Servants of the house" />
+
           <div className="mt-12 grid gap-px bg-white/10 md:grid-cols-3">
-            {leadership.senior.map((p) => (
-              <article key={p.initials} className="bg-void p-8">
+            {leaders.map((p) => (
+              <article key={p.id || p.initials} className="bg-void p-8">
                 <div className="font-serif text-7xl text-gold">{p.initials}</div>
                 <h3 className="mt-6 font-serif text-2xl">{p.role}</h3>
                 <p className="mt-3 text-sm leading-6 text-mist">{p.focus}</p>
@@ -69,21 +81,30 @@ export default function About() {
             ))}
           </div>
 
+          {leaders.length === 0 && (
+            <p className="mt-10 text-mist">No leadership entries yet. Admin can add them from the dashboard.</p>
+          )}
+
+          {/* Keep the original deacons & stewards as static for now */}
           <div className="mt-10">
             <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-gold">Deacons</h3>
             <div className="mt-4 grid grid-cols-2 gap-px bg-white/10 sm:grid-cols-5">
-              {leadership.deacons.map((d, i) => (
+              {defaultLeadership.deacons.map((d, i) => (
                 <div key={d} className="bg-void px-4 py-6 text-center">
                   <div className="font-serif text-3xl">{d}</div>
-                  <div className="mt-2 text-[10px] uppercase tracking-[0.18em] text-mist">Deacon 0{i + 1}</div>
+                  <div className="mt-2 text-[10px] uppercase tracking-[0.18em] text-mist">
+                    Deacon 0{i + 1}
+                  </div>
                 </div>
               ))}
             </div>
             <div className="mt-px grid gap-px bg-white/10 sm:grid-cols-2">
-              {leadership.stewards.map((s) => (
+              {defaultLeadership.stewards.map((s) => (
                 <div key={s.initials} className="flex items-center justify-between bg-void px-6 py-5">
                   <span className="font-serif text-3xl text-gold">{s.initials}</span>
-                  <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-mist">{s.role}</span>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-mist">
+                    {s.role}
+                  </span>
                 </div>
               ))}
             </div>
