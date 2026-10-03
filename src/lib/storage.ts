@@ -437,10 +437,14 @@ export const store = {
   },
 
   // Settings
+   // Settings
   getSettings(): SiteSettings {
-  const saved = read(KEYS.settings, {} as Partial<SiteSettings>);
-  return { ...defaultSettings, ...saved };
- },
+    const saved = read(KEYS.settings, {} as Partial<SiteSettings>);
+    return { ...defaultSettings, ...saved };
+  },
+  saveSettings(settings: SiteSettings) {
+    write(KEYS.settings, settings);
+  },
 
   // Content
   getMinistries(): Ministry[] {
