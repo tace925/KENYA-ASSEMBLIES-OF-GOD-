@@ -1,4 +1,4 @@
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import {
   Bell,
   BookOpen,
@@ -321,6 +321,99 @@ function BookingPolicyPanel({
   );
 }
 
+function BookingsPanel({ bookings, onChange }: { bookings: Booking[]; onChange: () => void }) {
+  const [subTab, setSubTab] = useState<"requests" | "rooms" | "policy">("requests");
+  const settings = store.getSettings();
+
+  return (
+    <section>
+      <h2 className="font-serif text-4xl">Bookings</h2>
+
+      <div className="mt-6 flex flex-wrap gap-2">
+        <button type="button" className={`chip ${subTab === "requests" ? "active" : ""}`} onClick={() => setSubTab("requests")}>
+          Requests
+        </button>
+        <button type="button" className={`chip ${subTab === "rooms" ? "active" : ""}`} onClick={() => setSubTab("rooms")}>
+          Room Types & Prices
+        </button>
+        <button type="button" className={`chip ${subTab === "policy" ? "active" : ""}`} onClick={() => setSubTab("policy")}>
+          Notice & Policy
+        </button>
+      </div>
+
+      {subTab === "requests" && (
+        <div className="mt-8 overflow-x-auto border border-white/10">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Guest</th>
+                <th>Room / dates</th>
+                <th>M-Pesa</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {bookings.map((b) => (
+                <tr key={b.id}>
+                  <td className="font-semibold">{b.code}</td>
+                  <td>
+                    {b.name}
+                    <div className="text-xs text-mist">{b.phone}</div>
+                  </td>
+                  <td>
+                    {b.roomType}
+                    <div className="text-xs text-mist">
+                      {b.checkIn} → {b.checkOut}
+                    </div>
+                  </td>
+                  <td>{b.mpesaCode}</td>
+                  <td>KES {b.total.toLocaleString()}</td>
+                  <td>
+                    <span className={statusBadge(b.status)}>{b.status}</span>
+                  </td>
+                  <td className="space-x-2 whitespace-nowrap">
+                    <button
+                      type="button"
+                      className="btn-gold !min-h-9 !px-3"
+                      onClick={() => {
+                        store.updateBooking(b.id, { status: "confirmed" });
+                        onChange();
+                      }}
+                    >
+                      Confirm
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-ghost !min-h-9 !px-3"
+                      onClick={() => {
+                        store.updateBooking(b.id, { status: "cancelled" });
+                        onChange();
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {bookings.length === 0 && (
+                <tr>
+                  <td colSpan={7}>No bookings yet.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {subTab === "rooms" && <RoomTypesPanel onChange={onChange} />}
+      {subTab === "policy" && <BookingPolicyPanel settings={settings} onChange={onChange} />}
+    </section>
+  );
+}
+
 function RoomTypesPanel({ onChange }: { onChange: () => void }) {
   const [items, setItems] = useState(() => store.getRoomTypes());
 
@@ -391,52 +484,7 @@ function RoomTypesPanel({ onChange }: { onChange: () => void }) {
   );
 }
 
-function BookingPolicyPanel({
-  settings,
-  onChange,
-}: {
-  settings: SiteSettings;
-  onChange: () => void;
-}) {
-  const [form, setForm] = useState(settings);
 
-   const onSave = (e: FormEvent) => {
-    e.preventDefault();
-    store.saveSettings(form);
-    onChange();
-    window.dispatchEvent(new Event("mol-settings-changed"));
-    alert("Booking notice & policy saved.");
-  };  
-
-  return (
-    <form onSubmit={onSave} className="mt-8 max-w-2xl space-y-4 border border-white/10 p-6">
-      <h3 className="font-serif text-2xl">Booking Notice & Policy</h3>
-      <label className="field">
-        Booking Notice
-        <textarea
-          className="field-input resize-none"
-          rows={3}
-          value={form.bookingNotice}
-          onChange={(e) => setForm({ ...form, bookingNotice: e.target.value })}
-          placeholder="Shown to guests on the booking page"
-        />
-      </label>
-      <label className="field">
-        Booking Policy
-        <textarea
-          className="field-input resize-none"
-          rows={4}
-          value={form.bookingPolicy}
-          onChange={(e) => setForm({ ...form, bookingPolicy: e.target.value })}
-          placeholder="Rules, cancellation policy, etc."
-        />
-      </label>
-      <button type="submit" className="btn-gold">
-        Save Notice & Policy
-      </button>
-    </form>
-  );
-}
 
 function MessagesPanel({ messages, onChange }: { messages: ReturnType<typeof store.getContacts>; onChange: () => void }) {
   return (
