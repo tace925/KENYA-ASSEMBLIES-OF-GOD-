@@ -11,14 +11,14 @@ export default function Layout() {
 
   // Live update when Admin saves settings
   useEffect(() => {
-    const sync = () => setSettings(store.getSettings());
-    window.addEventListener("mol-settings-changed", sync);
-    window.addEventListener("storage", sync);
-    return () => {
-      window.removeEventListener("mol-settings-changed", sync);
-      window.removeEventListener("storage", sync);
-    };
-  }, []);
+  const sync = () => setSettings(store.getSettings());
+  window.addEventListener("mol-settings-changed", sync);
+  window.addEventListener("storage", sync);
+  return () => {
+    window.removeEventListener("mol-settings-changed", sync);
+    window.removeEventListener("storage", sync);
+  };
+}, []);
 
   // Close mobile menu on navigation
   useEffect(() => {
