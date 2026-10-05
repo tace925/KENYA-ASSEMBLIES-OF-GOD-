@@ -72,7 +72,10 @@ export default function Booking() {
           </>
         }
         subtitle="Reserve a retreat room, overnight guest space or fellowship hall. Pay via M-Pesa and keep your booking code."
-        image="https://images.pexels.com/photos/28896493/pexels-photo-28896493.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000"
+               image={
+          settings.heroBooking ||
+          "https://images.pexels.com/photos/28896493/pexels-photo-28896493.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000"
+        }
       />
 
       <section className="section bg-cream text-ink">

@@ -1,7 +1,13 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, CalendarDays, Clock3, MapPin, Play } from "lucide-react";
-import { church, galleryImages as defaultGallery, leadership as defaultLeadership, schedule as defaultSchedule } from "../data/content";
+import {
+  church,
+  galleryImages as defaultGallery,
+  leadership as defaultLeadership,
+  schedule as defaultSchedule,
+  ministries as defaultMinistries,
+} from "../data/content";
 import { store } from "../lib/storage";
 import { CTABand, reveal, SectionHeading, Stat } from "../components/ui";
 
@@ -18,6 +24,16 @@ export default function Home() {
 
   const storedGallery = store.getGallery();
   const gallery = storedGallery.length > 0 ? storedGallery : defaultGallery;
+
+  const storedMinistries = store.getMinistries();
+  const ministriesPreview =
+    storedMinistries.length > 0
+      ? storedMinistries.slice(0, 3)
+      : defaultMinistries.slice(0, 3).map((m, i) => ({
+          id: `default-${i}`,
+          name: m.name,
+          desc: m.desc,
+        }));
 
   const sermon = schedule[0];
 
@@ -54,7 +70,8 @@ export default function Home() {
             transition={{ delay: 0.4 }}
             className="mt-6 max-w-xl text-lg leading-8 text-cream/70"
           >
-            Welcome to {settings.churchName || church.name}, Katoloni — a place to encounter God, grow in faith and find family in Christ.
+            Welcome to {settings.churchName || church.name}, Katoloni — a place to encounter God, grow
+            in faith and find family in Christ.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -110,7 +127,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Ministries preview (static for now) */}
+      {/* Ministries preview — Admin connected */}
       <section className="section bg-cream text-ink">
         <div className="container">
           <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
@@ -125,12 +142,20 @@ export default function Home() {
             </Link>
           </div>
           <div className="mt-12 grid gap-4 md:grid-cols-3">
-            {["Worship & Creative", "Youth & Teens", "Intercessory Prayer"].map((name, i) => (
-              <motion.div key={name} {...reveal} transition={{ ...reveal.transition, delay: i * 0.06 }} className="card-cream p-7">
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold-dark">0{i + 1}</span>
-                <h3 className="mt-4 font-serif text-2xl">{name}</h3>
+            {ministriesPreview.map((m, i) => (
+              <motion.div
+                key={m.id || m.name}
+                {...reveal}
+                transition={{ ...reveal.transition, delay: i * 0.06 }}
+                className="card-cream p-7"
+              >
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold-dark">
+                  0{i + 1}
+                </span>
+                <h3 className="mt-4 font-serif text-2xl">{m.name}</h3>
                 <p className="mt-3 text-sm leading-6 text-stone-600">
-                  Active ministry life with room for volunteers, gifts and new believers.
+                  {m.desc ||
+                    "Active ministry life with room for volunteers, gifts and new believers."}
                 </p>
               </motion.div>
             ))}
@@ -145,7 +170,8 @@ export default function Home() {
             <SectionHeading eyebrow="Service times" title="Come worship with us" />
             <div className="mt-8 space-y-4">
               <div className="flex gap-3 text-sm text-mist">
-                <CalendarDays className="text-gold" size={18} /> Sundays · Tuesday Bible Study · Friday Prayer
+                <CalendarDays className="text-gold" size={18} /> Sundays · Tuesday Bible Study · Friday
+                Prayer
               </div>
               <div className="flex gap-3 text-sm text-mist">
                 <MapPin className="text-gold" size={18} /> {church.location}
@@ -186,7 +212,10 @@ export default function Home() {
       {/* Latest word */}
       <section className="section bg-void">
         <div className="container grid gap-10 lg:grid-cols-2 lg:items-center">
-          <motion.div {...reveal} className="relative aspect-video overflow-hidden border border-white/10">
+          <motion.div
+            {...reveal}
+            className="relative aspect-video overflow-hidden border border-white/10"
+          >
             <img
               src="https://images.pexels.com/photos/36425621/pexels-photo-36425621.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=800&w=1400"
               alt="Latest message"
@@ -194,7 +223,10 @@ export default function Home() {
             />
             <div className="absolute inset-0 bg-black/35" />
             <div className="absolute inset-0 flex items-center justify-center">
-              <Link to="/confessions" className="grid h-16 w-16 place-items-center rounded-full border border-white/40 bg-black/40 text-cream backdrop-blur">
+              <Link
+                to="/confessions"
+                className="grid h-16 w-16 place-items-center rounded-full border border-white/40 bg-black/40 text-cream backdrop-blur"
+              >
                 <Play size={22} fill="currentColor" />
               </Link>
             </div>
@@ -217,23 +249,29 @@ export default function Home() {
         <div className="container">
           <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
             <SectionHeading eyebrow="Notice board" title="Life on the mountain" />
-            <Link to="/notices" className="text-xs font-bold uppercase tracking-[0.18em] text-gold">
+            <Link
+              to="/notices"
+              className="text-xs font-bold uppercase tracking-[0.18em] text-gold"
+            >
               All notices →
             </Link>
           </div>
           <div className="mt-10 border-t border-white/10">
             {notices.map((n) => (
-              <article key={n.id} className="grid gap-3 border-b border-white/10 py-6 sm:grid-cols-[140px_1fr]">
-                <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-gold">{n.category}</span>
+              <article
+                key={n.id}
+                className="grid gap-3 border-b border-white/10 py-6 sm:grid-cols-[140px_1fr]"
+              >
+                <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-gold">
+                  {n.category}
+                </span>
                 <div>
                   <h3 className="font-serif text-2xl">{n.title}</h3>
                   <p className="mt-2 text-sm leading-6 text-mist">{n.body}</p>
                 </div>
               </article>
             ))}
-            {notices.length === 0 && (
-              <p className="py-8 text-mist">No notices yet.</p>
-            )}
+            {notices.length === 0 && <p className="py-8 text-mist">No notices yet.</p>}
           </div>
         </div>
       </section>
