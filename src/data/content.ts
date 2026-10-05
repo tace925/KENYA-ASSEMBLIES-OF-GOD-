@@ -2,7 +2,7 @@ export const church = {
   name: "Mountain of the Lord Prayer Center",
   shortName: "Katoloni",
   tagline: "A house of prayer for all people",
-  motto: "Built for brands that bite — no: Built on the Word. Anchored in prayer.",
+  motto: "Built on the Word. Anchored in prayer.",
   location: "Katoloni, Machakos County, Kenya",
   email: "hello@mountainofthelord.org",
   phone: "0721 514 653",

@@ -439,11 +439,13 @@ function BookingPolicyPanel({
 }) {
   const [form, setForm] = useState(settings);
 
-  const onSave = (e: FormEvent) => {
+   const onSave = (e: FormEvent) => {
     e.preventDefault();
     store.saveSettings(form);
     onChange();
-  };
+    window.dispatchEvent(new Event("mol-settings-changed"));
+    alert("Booking notice & policy saved.");
+  };  
 
   return (
     <form onSubmit={onSave} className="mt-8 max-w-2xl space-y-4 border border-white/10 p-6">

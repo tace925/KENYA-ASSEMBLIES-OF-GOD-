@@ -436,7 +436,6 @@ export const store = {
     write(KEYS.testimonies, this.getTestimonies().filter((t) => t.id !== id));
   },
 
-  // Settings
    // Settings
   getSettings(): SiteSettings {
     const saved = read(KEYS.settings, {} as Partial<SiteSettings>);
@@ -445,7 +444,7 @@ export const store = {
   saveSettings(settings: SiteSettings) {
     write(KEYS.settings, settings);
   },
-
+  
   // Content
   getMinistries(): Ministry[] {
     return read(KEYS.ministries, []);
