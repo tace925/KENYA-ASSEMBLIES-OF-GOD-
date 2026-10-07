@@ -785,34 +785,91 @@ function GalleryPanel({ items, onChange }: { items: GalleryImage[]; onChange: ()
   const onAdd = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
-    store.saveGallery([...items, {
-      id: uid("gal"), src: String(fd.get("src")), caption: String(fd.get("caption")), tall: fd.get("tall") === "on",
-    }]);
-    e.currentTarget.reset();
-    onChange();
+    const file = (fd.get("imageFile") as File) || null;
+    const caption = String(fd.get("caption"));
+    const tall = fd.get("tall") === "on";
+
+    const finish = (src: string) => {
+      store.saveGallery([
+        ...items,
+        {
+          id: uid("gal"),
+          src,
+          caption,
+          tall,
+        },
+      ]);
+      e.currentTarget.reset();
+      onChange();
+    };
+
+    if (file && file.size) {
+      if (file.size > 1.5 * 1024 * 1024) {
+        alert("Image under 1.5 MB please.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => finish(String(reader.result));
+      reader.readAsDataURL(file);
+    } else {
+      const src = String(fd.get("src") || "").trim();
+      if (!src) {
+        alert("Add an image URL or upload a file.");
+        return;
+      }
+      finish(src);
+    }
   };
+
   return (
     <section className="grid gap-8 lg:grid-cols-2">
       <div>
         <h2 className="font-serif text-4xl">Gallery</h2>
+        <p className="mt-2 text-sm text-mist">
+          Paste a URL or upload from your computer (max ~1.5 MB).
+        </p>
         <form onSubmit={onAdd} className="mt-6 space-y-4 border border-white/10 p-5">
-          <label className="field">Image URL *<input required name="src" className="field-input" /></label>
-          <label className="field">Caption *<input required name="caption" className="field-input" /></label>
+          <label className="field">
+            Image URL
+            <input name="src" className="field-input" placeholder="https://..." />
+          </label>
+          <label className="field">
+            Or upload from computer
+            <input type="file" name="imageFile" accept="image/*" className="field-input" />
+          </label>
+          <label className="field">
+            Caption *
+            <input required name="caption" className="field-input" />
+          </label>
           <label className="flex items-center gap-3 text-sm text-mist">
             <input type="checkbox" name="tall" className="size-4" /> Tall image
           </label>
-          <button type="submit" className="btn-gold">Add image</button>
+          <button type="submit" className="btn-gold">
+            Add image
+          </button>
         </form>
       </div>
+
       <div className="grid grid-cols-2 gap-3">
         {items.map((g) => (
           <div key={g.id} className="relative overflow-hidden border border-white/10">
             <img src={g.src} alt={g.caption} className="aspect-square w-full object-cover" />
-            <button type="button" className="absolute right-2 top-2 bg-black/70 px-2 py-1 text-xs"
-              onClick={() => { store.saveGallery(items.filter((x) => x.id !== g.id)); onChange(); }}>Delete</button>
+            <button
+              type="button"
+              className="absolute right-2 top-2 bg-black/70 px-2 py-1 text-xs"
+              onClick={() => {
+                store.saveGallery(items.filter((x) => x.id !== g.id));
+                onChange();
+              }}
+            >
+              Delete
+            </button>
             <p className="p-2 text-xs text-mist">{g.caption}</p>
           </div>
         ))}
+        {items.length === 0 && (
+          <p className="col-span-2 text-mist">No gallery images yet.</p>
+        )}
       </div>
     </section>
   );
