@@ -203,7 +203,7 @@ export default function Admin() {
                 ["Bookings", bookings.length],
                 ["Unread messages", messages.filter((m) => !m.read).length],
                 ["New prayer requests", prayers.filter((p) => p.status === "new").length],
-                ["Library requests", library.filter((l) => l.status === "requested").length],
+               ["Library requests", library.filter((l) => l.status === "pending").length],
               ].map(([label, value]) => (
                 <div key={label as string} className="card p-5">
                   <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-mist">{label}</p>

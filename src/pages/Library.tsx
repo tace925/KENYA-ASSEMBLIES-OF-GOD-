@@ -57,7 +57,10 @@ export default function Library() {
           </>
         }
         subtitle="Guides, devotionals and teaching resources — request a copy and pick up from the church office."
-        image="https://images.pexels.com/photos/10373537/pexels-photo-10373537.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000"
+        image={
+  store.getSettings().heroLibrary ||
+  "https://images.pexels.com/photos/10373537/pexels-photo-10373537.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000"
+}
       />
 
       <section className="section bg-void">
