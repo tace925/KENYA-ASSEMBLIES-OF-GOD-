@@ -58,9 +58,9 @@ export default function Library() {
         }
         subtitle="Guides, devotionals and teaching resources — request a copy and pick up from the church office."
         image={
-  store.getSettings().heroLibrary ||
-  "https://images.pexels.com/photos/10373537/pexels-photo-10373537.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000"
-}
+          store.getSettings().heroLibrary ||
+          "https://images.pexels.com/photos/10373537/pexels-photo-10373537.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000"
+        }
       />
 
       <section className="section bg-void">
@@ -78,12 +78,16 @@ export default function Library() {
                 >
                   <span className="font-serif text-2xl text-mist">0{i + 1}</span>
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-gold">{b.category}</span>
+                    <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-gold">
+                      {b.category}
+                    </span>
                     <h3 className="mt-1 font-serif text-2xl">{b.title}</h3>
                     <p className="mt-1 text-sm text-mist">
                       {b.author} {b.note && `· ${b.note}`}
                     </p>
-                    {b.policy && <p className="mt-1 text-xs text-mist/70">Policy: {b.policy}</p>}
+                    {b.policy && (
+                      <p className="mt-1 text-xs text-mist/70">Policy: {b.policy}</p>
+                    )}
                   </div>
                   <button type="button" className="btn-line" onClick={() => setSelected(b.title)}>
                     <BookOpen size={14} /> Request
@@ -92,7 +96,6 @@ export default function Library() {
               ))}
             </div>
 
-            {/* Status checker */}
             <div className="mt-12 border border-white/10 bg-panel p-6">
               <h3 className="font-serif text-2xl">Check my request</h3>
               <form onSubmit={onLookup} className="mt-4 flex gap-2">
@@ -115,7 +118,9 @@ export default function Library() {
                         {r.code} · <span className="uppercase text-gold">{r.status}</span>
                       </p>
                       <p className="mt-1">{r.bookTitle}</p>
-                      <p className="text-mist">{r.name} · {r.phone}</p>
+                      <p className="text-mist">
+                        {r.name} · {r.phone}
+                      </p>
                       {r.pickupDate && <p className="text-mist">Pickup: {r.pickupDate}</p>}
                     </div>
                   ))}
@@ -124,7 +129,7 @@ export default function Library() {
             </div>
           </div>
 
-          <div className="border border-white/10 bg-panel p-6 sm:p-8 h-fit">
+          <div className="h-fit border border-white/10 bg-panel p-6 sm:p-8">
             <h3 className="font-serif text-3xl">Pickup request</h3>
             <p className="mt-2 text-sm text-mist">
               Selected: <span className="text-gold">{selected || "None"}</span>
@@ -137,9 +142,13 @@ export default function Library() {
 
                 {showCode && (
                   <div className="mt-5 rounded border border-gold/30 bg-void p-4">
-                    <p className="text-xs font-bold uppercase tracking-wider text-mist">Your Request Code</p>
+                    <p className="text-xs font-bold uppercase tracking-wider text-mist">
+                      Your Request Code
+                    </p>
                     <div className="mt-2 flex items-center justify-between gap-3">
-                      <span className="font-serif text-2xl font-bold tracking-wider text-cream">{done.code}</span>
+                      <span className="font-serif text-2xl font-bold tracking-wider text-cream">
+                        {done.code}
+                      </span>
                       <button type="button" onClick={copyCode} className="btn-line !min-h-10 !px-4">
                         <Copy size={14} /> {copied ? "Copied!" : "Copy"}
                       </button>

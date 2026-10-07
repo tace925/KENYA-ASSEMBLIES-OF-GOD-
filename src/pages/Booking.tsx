@@ -72,7 +72,7 @@ export default function Booking() {
           </>
         }
         subtitle="Reserve a retreat room, overnight guest space or fellowship hall. Pay via M-Pesa and keep your booking code."
-               image={
+        image={
           settings.heroBooking ||
           "https://images.pexels.com/photos/28896493/pexels-photo-28896493.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000"
         }
@@ -89,17 +89,27 @@ export default function Booking() {
                   type="button"
                   onClick={() => setRoomId(r.id)}
                   className={`w-full border p-5 text-left transition ${
-                    roomId === r.id ? "border-ink bg-ink text-cream" : "border-stone-300 bg-white hover:border-gold-dark"
+                    roomId === r.id
+                      ? "border-ink bg-ink text-cream"
+                      : "border-stone-300 bg-white hover:border-gold-dark"
                   }`}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <h3 className="font-serif text-2xl">{r.name}</h3>
-                      <p className={`mt-2 text-sm leading-6 ${roomId === r.id ? "text-cream/70" : "text-stone-600"}`}>
+                      <p
+                        className={`mt-2 text-sm leading-6 ${
+                          roomId === r.id ? "text-cream/70" : "text-stone-600"
+                        }`}
+                      >
                         {r.desc}
                       </p>
                     </div>
-                    <span className={`text-sm font-bold ${roomId === r.id ? "text-gold-light" : "text-gold-dark"}`}>
+                    <span
+                      className={`text-sm font-bold ${
+                        roomId === r.id ? "text-gold-light" : "text-gold-dark"
+                      }`}
+                    >
                       KES {r.rate.toLocaleString()}/night
                     </span>
                   </div>
@@ -139,7 +149,9 @@ export default function Booking() {
               </form>
               {found && (
                 <div className="mt-4 space-y-3">
-                  {found.length === 0 && <p className="text-sm text-stone-500">No booking found.</p>}
+                  {found.length === 0 && (
+                    <p className="text-sm text-stone-500">No booking found.</p>
+                  )}
                   {found.map((b) => (
                     <div key={b.id} className="border border-stone-200 p-4 text-sm">
                       <p className="font-bold">
@@ -174,15 +186,24 @@ export default function Booking() {
 
                 {showCode && (
                   <div className="mt-5 rounded border border-emerald-300 bg-white p-4">
-                    <p className="text-xs font-bold uppercase tracking-wider text-stone-500">Your Booking Code</p>
+                    <p className="text-xs font-bold uppercase tracking-wider text-stone-500">
+                      Your Booking Code
+                    </p>
                     <div className="mt-2 flex items-center justify-between gap-3">
-                      <span className="font-serif text-2xl font-bold tracking-wider text-ink">{done.code}</span>
-                      <button type="button" onClick={copyCode} className="btn-dark !min-h-10 !px-4">
+                      <span className="font-serif text-2xl font-bold tracking-wider text-ink">
+                        {done.code}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={copyCode}
+                        className="btn-dark !min-h-10 !px-4"
+                      >
                         <Copy size={14} /> {copied ? "Copied!" : "Copy"}
                       </button>
                     </div>
                     <p className="mt-3 text-xs text-stone-500">
-                      Please copy and save this code. You will use it to check your booking status.
+                      Please copy and save this code. You will use it to check your booking
+                      status.
                     </p>
                     <button
                       type="button"
@@ -210,7 +231,12 @@ export default function Booking() {
                 </label>
                 <label className="field light">
                   Email
-                  <input name="email" type="email" className="field-input" placeholder="you@email.com" />
+                  <input
+                    name="email"
+                    type="email"
+                    className="field-input"
+                    placeholder="you@email.com"
+                  />
                 </label>
                 <label className="field light">
                   Check-in *
@@ -245,7 +271,12 @@ export default function Booking() {
                 </label>
                 <label className="field light">
                   M-Pesa transaction ID *
-                  <input required name="mpesa" className="field-input" placeholder="e.g. QE12ABC456" />
+                  <input
+                    required
+                    name="mpesa"
+                    className="field-input"
+                    placeholder="e.g. QE12ABC456"
+                  />
                 </label>
                 <label className="field light sm:col-span-2">
                   Notes
@@ -258,8 +289,8 @@ export default function Booking() {
                 </label>
                 <div className="sm:col-span-2 rounded-none border border-stone-200 bg-stone-50 p-4 text-sm">
                   <p>
-                    Pay <strong>KES {total.toLocaleString()}</strong> via M-Pesa to the church till/paybill, then enter
-                    the transaction code above.
+                    Pay <strong>KES {total.toLocaleString()}</strong> via M-Pesa to the church
+                    till/paybill, then enter the transaction code above.
                   </p>
                 </div>
                 <button type="submit" className="btn-dark sm:col-span-2">
