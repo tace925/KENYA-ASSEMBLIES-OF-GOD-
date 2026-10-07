@@ -9,18 +9,16 @@ export default function Layout() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [settings, setSettings] = useState<SiteSettings>(() => store.getSettings());
 
-  // Live update when Admin saves settings
   useEffect(() => {
-  const sync = () => setSettings(store.getSettings());
-  window.addEventListener("mol-settings-changed", sync);
-  window.addEventListener("storage", sync);
-  return () => {
-    window.removeEventListener("mol-settings-changed", sync);
-    window.removeEventListener("storage", sync);
-  };
-}, []);
+    const sync = () => setSettings(store.getSettings());
+    window.addEventListener("mol-settings-changed", sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener("mol-settings-changed", sync);
+      window.removeEventListener("storage", sync);
+    };
+  }, []);
 
-  // Close mobile menu on navigation
   useEffect(() => {
     setMenuOpen(false);
   }, [location.pathname]);
@@ -41,14 +39,12 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen bg-void text-cream">
-      {/* Announcement bar */}
       {announcement && (
         <div className="border-b border-white/10 bg-ink px-4 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-gold">
           {announcement}
         </div>
       )}
 
-      {/* Header */}
       <header className="sticky top-0 z-50 border-b border-white/10 bg-void/95 backdrop-blur">
         <div className="container flex h-16 items-center justify-between gap-4 sm:h-20">
           <Link to="/" className="flex min-w-0 items-center gap-3">
@@ -86,9 +82,10 @@ export default function Layout() {
             <Link to="/booking" className="btn-gold !min-h-10 !px-4 text-[11px]">
               Book / Visit →
             </Link>
+            {/* Always available: opens full menu (Admin, Prayer, Library, etc.) */}
             <button
               type="button"
-              className="grid h-10 w-10 place-items-center border border-white/15 lg:hidden"
+              className="grid h-10 w-10 place-items-center border border-white/15"
               onClick={() => setMenuOpen((v) => !v)}
               aria-label="Menu"
             >
@@ -98,8 +95,8 @@ export default function Layout() {
         </div>
 
         {menuOpen && (
-          <div className="border-t border-white/10 bg-panel lg:hidden">
-            <div className="container flex flex-col gap-1 py-4">
+          <div className="border-t border-white/10 bg-panel">
+            <div className="container flex flex-col gap-1 py-4 sm:grid sm:grid-cols-2 lg:grid-cols-3">
               {[...navMain, ...navMore].map((item) => (
                 <NavLink
                   key={item.to}
