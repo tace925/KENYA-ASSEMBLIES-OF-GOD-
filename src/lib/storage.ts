@@ -91,22 +91,40 @@ export type Testimony = {
   date: string;
 };
 
+export type LostFoundItem = {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  location: string;
+  dateFound: string;
+  status: "open" | "claimed" | "closed";
+  createdAt: string;
+};
+
+export type LostFoundClaim = {
+  id: string;
+  itemId: string;
+  itemTitle: string;
+  name: string;
+  phone: string;
+  email: string;
+  whereFrom: string;
+  createdAt: string;
+  status: "new" | "reviewed" | "approved" | "rejected";
+};
+
 export type SiteSettings = {
-  // Existing
   announcement: string;
-  heroImage: string;          // Home hero
+  heroImage: string;
   bishopPhone: string;
   bishopEmail: string;
   bookingNotice: string;
   bookingPolicy: string;
-
-  // Branding
   logoText: string;
   churchName: string;
   churchSubtitle: string;
   footerDescription: string;
-
-  // Hero images for every page
   heroAbout: string;
   heroServices: string;
   heroMinistries: string;
@@ -121,8 +139,6 @@ export type SiteSettings = {
   heroBooking: string;
   heroLibrary: string;
   heroWall: string;
-
-  // Project page content
   projectTitle: string;
   projectSubtitle: string;
   projectPhase1Title: string;
@@ -196,6 +212,8 @@ const KEYS = {
   leadership: "mol_leadership",
   roomTypes: "mol_room_types",
   admin: "mol_admin_auth",
+  lostFound: "mol_lost_found",
+  lostFoundClaims: "mol_lost_found_claims",
 };
 
 function read<T>(key: string, fallback: T): T {
@@ -240,47 +258,60 @@ const defaultRoomTypes: RoomType[] = [
 
 const defaultSettings: SiteSettings = {
   announcement: "Welcome to the Mountain — A House of Prayer for All People.",
-  heroImage: "https://images.pexels.com/photos/36425621/pexels-photo-36425621.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1200&w=2000",
+  heroImage:
+    "https://images.pexels.com/photos/36425621/pexels-photo-36425621.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1200&w=2000",
   bishopPhone: "0712 345 678",
   bishopEmail: "office@mountainofthelord.org",
   bookingNotice: "Please pay via M-Pesa and keep your transaction code.",
-  bookingPolicy: "Bookings are confirmed after payment verification. Cancellation must be done 24 hours before check-in.",
-
+  bookingPolicy:
+    "Bookings are confirmed after payment verification. Cancellation must be done 24 hours before check-in.",
   logoText: "MG",
   churchName: "MOUNTAIN OF THE LORD",
   churchSubtitle: "Prayer Center, Katoloni",
-  footerDescription: "a faith community devoted to prayer, the Word and serving Katoloni with the love of Jesus Christ.",
-
-  // Hero images (same defaults for now – Admin can change)
-  heroAbout: "https://images.pexels.com/photos/10373537/pexels-photo-10373537.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
-  heroServices: "https://images.pexels.com/photos/36425622/pexels-photo-36425622.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
-  heroMinistries: "https://images.pexels.com/photos/13908967/pexels-photo-13908967.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
-  heroHomeCells: "https://images.pexels.com/photos/13908967/pexels-photo-13908967.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
-  heroGallery: "https://images.pexels.com/photos/36425621/pexels-photo-36425621.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
-  heroConfessions: "https://images.pexels.com/photos/36425621/pexels-photo-36425621.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
-  heroNotices: "https://images.pexels.com/photos/13963623/pexels-photo-13963623.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
-  heroProject: "https://images.pexels.com/photos/34123302/pexels-photo-34123302.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
-  heroTour: "https://images.pexels.com/photos/28896493/pexels-photo-28896493.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
-  heroContact: "https://images.pexels.com/photos/13963623/pexels-photo-13963623.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
-  heroPrayer: "https://images.pexels.com/photos/35266419/pexels-photo-35266419.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
-  heroBooking: "https://images.pexels.com/photos/36425621/pexels-photo-36425621.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
-  heroLibrary: "https://images.pexels.com/photos/36425621/pexels-photo-36425621.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
-  heroWall: "https://images.pexels.com/photos/35266419/pexels-photo-35266419.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
-
-  // Project page
+  footerDescription:
+    "a faith community devoted to prayer, the Word and serving Katoloni with the love of Jesus Christ.",
+  heroAbout:
+    "https://images.pexels.com/photos/10373537/pexels-photo-10373537.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
+  heroServices:
+    "https://images.pexels.com/photos/36425622/pexels-photo-36425622.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
+  heroMinistries:
+    "https://images.pexels.com/photos/13908967/pexels-photo-13908967.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
+  heroHomeCells:
+    "https://images.pexels.com/photos/13908967/pexels-photo-13908967.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
+  heroGallery:
+    "https://images.pexels.com/photos/36425621/pexels-photo-36425621.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
+  heroConfessions:
+    "https://images.pexels.com/photos/36425621/pexels-photo-36425621.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
+  heroNotices:
+    "https://images.pexels.com/photos/13963623/pexels-photo-13963623.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
+  heroProject:
+    "https://images.pexels.com/photos/34123302/pexels-photo-34123302.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
+  heroTour:
+    "https://images.pexels.com/photos/28896493/pexels-photo-28896493.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
+  heroContact:
+    "https://images.pexels.com/photos/13963623/pexels-photo-13963623.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
+  heroPrayer:
+    "https://images.pexels.com/photos/35266419/pexels-photo-35266419.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
+  heroBooking:
+    "https://images.pexels.com/photos/36425621/pexels-photo-36425621.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
+  heroLibrary:
+    "https://images.pexels.com/photos/36425621/pexels-photo-36425621.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
+  heroWall:
+    "https://images.pexels.com/photos/35266419/pexels-photo-35266419.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1100&w=2000",
   projectTitle: "Building a home for generations.",
-  projectSubtitle: "We are preparing a lasting place of worship, prayer and service for Katoloni. Every prayer, gift and willing hand helps build the vision.",
+  projectSubtitle:
+    "We are preparing a lasting place of worship, prayer and service for Katoloni. Every prayer, gift and willing hand helps build the vision.",
   projectPhase1Title: "Foundation",
   projectPhase1Desc: "Site preparation, structural works and the base that carries the vision.",
   projectPhase2Title: "Sanctuary",
   projectPhase2Desc: "A worship hall designed for prayer, teaching and multi-generational gatherings.",
   projectPhase3Title: "Ministry spaces",
   projectPhase3Desc: "Rooms for counselling, children, media, guests and community service.",
-  projectSupportText: "To give toward the building fund or partner as a ministry, contact the church office or reach the bishop's desk.",
+  projectSupportText:
+    "To give toward the building fund or partner as a ministry, contact the church office or reach the bishop's desk.",
 };
 
 export const store = {
-  // Auth
   isAdmin() {
     return localStorage.getItem(KEYS.admin) === "true";
   },
@@ -295,7 +326,6 @@ export const store = {
     localStorage.removeItem(KEYS.admin);
   },
 
-  // Room Types
   getRoomTypes(): RoomType[] {
     return read(KEYS.roomTypes, defaultRoomTypes);
   },
@@ -303,7 +333,6 @@ export const store = {
     write(KEYS.roomTypes, list);
   },
 
-  // Bookings
   getBookings(): Booking[] {
     return read(KEYS.bookings, []);
   },
@@ -326,7 +355,6 @@ export const store = {
     );
   },
 
-  // Library Books Catalogue
   getLibraryBooks(): LibraryBook[] {
     return read(KEYS.libraryBooks, []);
   },
@@ -334,7 +362,6 @@ export const store = {
     write(KEYS.libraryBooks, list);
   },
 
-  // Library Requests
   getLibrary(): LibraryRequest[] {
     return read(KEYS.library, []);
   },
@@ -359,7 +386,6 @@ export const store = {
     );
   },
 
-  // Notices
   getNotices(): Notice[] {
     return read(KEYS.notices, []);
   },
@@ -369,10 +395,12 @@ export const store = {
     write(KEYS.notices, list);
   },
   deleteNotice(id: string) {
-    write(KEYS.notices, this.getNotices().filter((n) => n.id !== id));
+    write(
+      KEYS.notices,
+      this.getNotices().filter((n) => n.id !== id)
+    );
   },
 
-  // Contacts
   getContacts(): ContactMessage[] {
     return read(KEYS.contacts, []);
   },
@@ -388,10 +416,12 @@ export const store = {
     );
   },
   deleteContact(id: string) {
-    write(KEYS.contacts, this.getContacts().filter((m) => m.id !== id));
+    write(
+      KEYS.contacts,
+      this.getContacts().filter((m) => m.id !== id)
+    );
   },
 
-  // Prayers
   getPrayers(): PrayerRequest[] {
     return read(KEYS.prayers, []);
   },
@@ -407,7 +437,6 @@ export const store = {
     );
   },
 
-  // Complaints
   getComplaints(): Complaint[] {
     return read(KEYS.complaints, []);
   },
@@ -423,7 +452,6 @@ export const store = {
     );
   },
 
-  // Testimonies
   getTestimonies(): Testimony[] {
     return read(KEYS.testimonies, []);
   },
@@ -433,10 +461,12 @@ export const store = {
     write(KEYS.testimonies, list);
   },
   deleteTestimony(id: string) {
-    write(KEYS.testimonies, this.getTestimonies().filter((t) => t.id !== id));
+    write(
+      KEYS.testimonies,
+      this.getTestimonies().filter((t) => t.id !== id)
+    );
   },
 
-   // Settings
   getSettings(): SiteSettings {
     const saved = read(KEYS.settings, {} as Partial<SiteSettings>);
     return { ...defaultSettings, ...saved };
@@ -444,8 +474,7 @@ export const store = {
   saveSettings(settings: SiteSettings) {
     write(KEYS.settings, settings);
   },
-  
-  // Content
+
   getMinistries(): Ministry[] {
     return read(KEYS.ministries, []);
   },
@@ -486,5 +515,45 @@ export const store = {
   },
   saveLeadership(list: Leader[]) {
     write(KEYS.leadership, list);
+  },
+
+  // Lost & Found
+  getLostFound(): LostFoundItem[] {
+    return read(KEYS.lostFound, []);
+  },
+  saveLostFound(list: LostFoundItem[]) {
+    write(KEYS.lostFound, list);
+  },
+  addLostFound(item: LostFoundItem) {
+    const list = this.getLostFound();
+    list.unshift(item);
+    write(KEYS.lostFound, list);
+  },
+  updateLostFound(id: string, patch: Partial<LostFoundItem>) {
+    write(
+      KEYS.lostFound,
+      this.getLostFound().map((i) => (i.id === id ? { ...i, ...patch } : i))
+    );
+  },
+  deleteLostFound(id: string) {
+    write(
+      KEYS.lostFound,
+      this.getLostFound().filter((i) => i.id !== id)
+    );
+  },
+
+  getLostFoundClaims(): LostFoundClaim[] {
+    return read(KEYS.lostFoundClaims, []);
+  },
+  saveLostFoundClaim(c: LostFoundClaim) {
+    const list = this.getLostFoundClaims();
+    list.unshift(c);
+    write(KEYS.lostFoundClaims, list);
+  },
+  updateLostFoundClaim(id: string, patch: Partial<LostFoundClaim>) {
+    write(
+      KEYS.lostFoundClaims,
+      this.getLostFoundClaims().map((c) => (c.id === id ? { ...c, ...patch } : c))
+    );
   },
 };
