@@ -1,13 +1,30 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
-import { Menu, X, MessageCircle } from "lucide-react";
+import { Menu, X, MessageCircle, Sun, Moon } from "lucide-react";
 import { church, navMain, navMore } from "../data/content";
 import { store, type SiteSettings } from "../lib/storage";
+
+type Theme = "dark" | "light";
+
+function getInitialTheme(): Theme {
+  try {
+    return localStorage.getItem("mol-theme") === "light" ? "light" : "dark";
+  } catch {
+    return "dark";
+  }
+}
 
 export default function Layout() {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [theme, setTheme] = useState<Theme>(getInitialTheme);
   const [settings, setSettings] = useState<SiteSettings>(() => store.getSettings());
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // The 7 links shown in the header bar (desktop)
+  const mainLinks = navMain.slice(0, 7);
+  // Everything else goes in the dropdown
+  const dropdownLinks = [...navMain.slice(7), ...navMore];
 
   useEffect(() => {
     const sync = () => setSettings(store.getSettings());
@@ -19,9 +36,42 @@ export default function Layout() {
     };
   }, []);
 
+  // Close menu when the page changes
   useEffect(() => {
     setMenuOpen(false);
   }, [location.pathname]);
+
+  // Close menu on outside click or Escape
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onClick = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    document.addEventListener("mousedown", onClick);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onClick);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [menuOpen]);
+
+  // Apply + remember theme (adds class "light" or "dark" and data-theme on <html>)
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.toggle("light", theme === "light");
+    root.classList.toggle("dark", theme === "dark");
+    root.setAttribute("data-theme", theme);
+    try {
+      localStorage.setItem("mol-theme", theme);
+    } catch {
+      /* ignore */
+    }
+  }, [theme]);
 
   const logoText = settings.logoText || "MG";
   const churchName = settings.churchName || church.name;
@@ -36,6 +86,11 @@ export default function Layout() {
   const whatsapp = church.whatsapp || "254721514653";
 
   const isAdmin = location.pathname.includes("admin");
+
+  const dropdownLinkClass = ({ isActive }: { isActive: boolean }) =>
+    `block px-4 py-3 text-xs font-semibold uppercase tracking-[0.12em] transition hover:bg-white/5 ${
+      isActive ? "text-gold" : "text-cream/80"
+    }`;
 
   return (
     <div className="min-h-screen bg-void text-cream">
@@ -62,7 +117,7 @@ export default function Layout() {
           </Link>
 
           <nav className="hidden items-center gap-1 xl:flex">
-            {navMain.slice(0, 7).map((item) => (
+            {mainLinks.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
@@ -78,42 +133,65 @@ export default function Layout() {
             ))}
           </nav>
 
+          {/* Right side: ☰ menu → dark mode → Book / Visit */}
           <div className="flex items-center gap-2">
+            <div ref={menuRef} className="sm:relative">
+              <button
+                type="button"
+                className="grid h-10 w-10 place-items-center border border-white/15 transition hover:border-gold/50"
+                onClick={() => setMenuOpen((v) => !v)}
+                aria-label="Menu"
+                aria-expanded={menuOpen}
+              >
+                {menuOpen ? <X size={18} /> : <Menu size={18} />}
+              </button>
+
+              {menuOpen && (
+                <div className="absolute left-0 right-0 top-full max-h-[70vh] overflow-y-auto border-y border-white/10 bg-panel shadow-xl sm:left-auto sm:right-0 sm:w-64 sm:border">
+                  {/* On small screens the 7 main links aren't in the header, so show them here */}
+                  <div className="xl:hidden">
+                    {mainLinks.map((item) => (
+                      <NavLink
+                        key={item.to}
+                        to={item.to}
+                        end={item.to === "/"}
+                        className={dropdownLinkClass}
+                      >
+                        {item.label}
+                      </NavLink>
+                    ))}
+                    <div className="my-1 border-t border-white/10" />
+                  </div>
+
+                  {dropdownLinks.map((item) => (
+                    <NavLink
+                      key={item.to}
+                      to={item.to}
+                      end={item.to === "/"}
+                      className={dropdownLinkClass}
+                    >
+                      {item.label}
+                    </NavLink>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <button
+              type="button"
+              className="grid h-10 w-10 place-items-center border border-white/15 transition hover:border-gold/50"
+              onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}
+              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+              title={theme === "dark" ? "Light mode" : "Dark mode"}
+            >
+              {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+
             <Link to="/booking" className="btn-gold !min-h-10 !px-4 text-[11px]">
               Book / Visit →
             </Link>
-            {/* Always available: opens full menu (Admin, Prayer, Library, etc.) */}
-            <button
-              type="button"
-              className="grid h-10 w-10 place-items-center border border-white/15"
-              onClick={() => setMenuOpen((v) => !v)}
-              aria-label="Menu"
-            >
-              {menuOpen ? <X size={18} /> : <Menu size={18} />}
-            </button>
           </div>
         </div>
-
-        {menuOpen && (
-          <div className="border-t border-white/10 bg-panel">
-            <div className="container flex flex-col gap-1 py-4 sm:grid sm:grid-cols-2 lg:grid-cols-3">
-              {[...navMain, ...navMore].map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  end={item.to === "/"}
-                  className={({ isActive }) =>
-                    `px-2 py-3 text-sm font-semibold uppercase tracking-[0.12em] ${
-                      isActive ? "text-gold" : "text-cream/80"
-                    }`
-                  }
-                >
-                  {item.label}
-                </NavLink>
-              ))}
-            </div>
-          </div>
-        )}
       </header>
 
       <main>
