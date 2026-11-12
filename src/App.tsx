@@ -16,6 +16,7 @@ import Prayer from "./pages/Prayer";
 import HomeCells from "./pages/HomeCells";
 import Confessions from "./pages/Confessions";
 import Admin from "./pages/Admin";
+import Appointments from "./pages/Appointments";   // ← NEW
 
 export default function App() {
   return (
@@ -31,6 +32,7 @@ export default function App() {
           <Route path="notices" element={<Notices />} />
           <Route path="wall" element={<Wall />} />
           <Route path="booking" element={<Booking />} />
+          <Route path="appointments" element={<Appointments />} />   {/* ← NEW */}
           <Route path="library" element={<Library />} />
           <Route path="gallery" element={<Gallery />} />
           <Route path="contact" element={<Contact />} />

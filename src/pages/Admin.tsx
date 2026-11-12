@@ -35,10 +35,13 @@ import {
   type LostFoundClaim,
 } from "../lib/storage";
 import { downloadCsv, printTable } from "../lib/export";
+import AdminHelpTerminal from "../components/help/AdminHelpTerminal";
+import { getAppointments, deleteAppointment, type Appointment } from "../utils/appointmentsStorage";
 
 type Tab =
   | "overview"
   | "bookings"
+  | "appointments"
   | "messages"
   | "prayers"
   | "library"
@@ -52,7 +55,8 @@ type Tab =
   | "testimonies"
   | "leadership"
   | "lostfound"
-  | "settings";
+  | "settings"
+  | "help";
 
 const sidebarGroups = [
   {
@@ -60,6 +64,7 @@ const sidebarGroups = [
     items: [
       { id: "overview" as Tab, label: "Dashboard", icon: LayoutDashboard },
       { id: "bookings" as Tab, label: "Bookings", icon: CalendarDays },
+      { id: "appointments" as Tab, label: "Appointments", icon: Users },
       { id: "messages" as Tab, label: "Messages", icon: Mail },
       { id: "prayers" as Tab, label: "Prayer Requests", icon: Users },
     ],
@@ -84,6 +89,7 @@ const sidebarGroups = [
       { id: "library" as Tab, label: "Library Requests", icon: BookOpen },
       { id: "complaints" as Tab, label: "Complaints", icon: MessageSquareWarning },
       { id: "settings" as Tab, label: "Site Settings", icon: Settings },
+      { id: "help" as Tab, label: "System Help", icon: Search },
     ],
   },
 ];
@@ -263,6 +269,8 @@ export default function Admin() {
           <LostFoundPanel items={lostFound} claims={lostFoundClaims} onChange={refresh} />
         )}
         {tab === "settings" && <SettingsPanel settings={settings} onChange={refresh} />}
+        {tab === "appointments" && <AppointmentsPanel onChange={refresh} />}
+        {tab === "help" && <AdminHelpTerminal />}
       </div>
     </div>
   );
@@ -1085,6 +1093,74 @@ function LostFoundPanel({
           {claims.length === 0 && <p className="text-mist">No claims yet.</p>}
         </div>
       )}
+    </section>
+  );
+}
+
+function AppointmentsPanel({ onChange }: { onChange: () => void }) {
+  const [items, setItems] = useState<Appointment[]>(() => getAppointments());
+
+  const refreshList = () => {
+    setItems(getAppointments());
+    onChange();
+  };
+
+  const handleDelete = (id: string) => {
+    if (confirm("Delete this appointment?")) {
+      deleteAppointment(id);
+      refreshList();
+    }
+  };
+
+  return (
+    <section>
+      <h2 className="font-serif text-4xl">Pastor & Bishop Appointments</h2>
+      <p className="mt-2 text-mist">These are the appointments booked from the public Appointments page.</p>
+
+      <div className="mt-8 overflow-x-auto border border-white/10">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Meeting With</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Reason</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((a) => (
+              <tr key={a.id}>
+                <td>
+                  <div className="font-medium">{a.fullName}</div>
+                  <div className="text-xs text-mist">{a.email || "—"}</div>
+                </td>
+                <td>{a.phone}</td>
+                <td>{a.clergyName}</td>
+                <td>{a.date}</td>
+                <td>{a.time}</td>
+                <td className="max-w-xs truncate">{a.reason || "—"}</td>
+                <td>
+                  <button
+                    type="button"
+                    className="btn-ghost !min-h-9 !px-3"
+                    onClick={() => handleDelete(a.id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+            {items.length === 0 && (
+              <tr>
+                <td colSpan={7}>No appointments booked yet.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </section>
   );
 }

@@ -3,10 +3,11 @@ import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { Menu, X, MessageCircle, Sun, Moon, Lock, LogOut } from "lucide-react";
 import { church, navMain, navMore } from "../data/content";
 import { store, type SiteSettings } from "../lib/storage";
+import PublicHelpTerminal from "./help/PublicHelpTerminal"; // ← NEW
 
 type Theme = "dark" | "light";
 
-// ---- Admin login (client-side only, see note in chat) ----
+// ---- Admin login (client-side only) ----
 const ADMIN_USER = "katoloni001";
 const ADMIN_PASS = "KAG-4321";
 const AUTH_KEY = "tt-admin-auth";
@@ -15,7 +16,7 @@ const AUTH_KEY = "tt-admin-auth";
 const MAKER = "TEVINTECH";
 const MAKER_URL = "https://tevin-tec.vercel.app/";
 
-// Temporary light-theme overrides (works without touching index.css / tailwind config)
+// Temporary light-theme overrides
 const LIGHT_THEME_CSS = `
 html.light { color-scheme: light; }
 html.light body { background-color: #f6f2e9 !important; color: #1c1a15 !important; }
@@ -56,9 +57,7 @@ export default function Layout() {
   const [loginError, setLoginError] = useState("");
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // The 7 links shown in the header bar (desktop)
   const mainLinks = navMain.slice(0, 7);
-  // Everything else goes in the dropdown
   const dropdownLinks = [...navMain.slice(7), ...navMore];
 
   useEffect(() => {
@@ -71,12 +70,10 @@ export default function Layout() {
     };
   }, []);
 
-  // Close menu when the page changes
   useEffect(() => {
     setMenuOpen(false);
   }, [location.pathname]);
 
-  // Close menu on outside click or Escape
   useEffect(() => {
     if (!menuOpen) return;
     const onClick = (e: MouseEvent) => {
@@ -95,7 +92,6 @@ export default function Layout() {
     };
   }, [menuOpen]);
 
-  // Apply + remember theme (adds class "light" or "dark" and data-theme on <html>)
   useEffect(() => {
     const root = document.documentElement;
     root.classList.toggle("light", theme === "light");
@@ -108,7 +104,6 @@ export default function Layout() {
     }
   }, [theme]);
 
-  // TEVINTECH fingerprint: meta tags, html attribute and console signature
   useEffect(() => {
     document.documentElement.setAttribute("data-crafted-by", MAKER);
 
@@ -220,7 +215,6 @@ export default function Layout() {
             ))}
           </nav>
 
-          {/* Right side: ☰ menu → dark mode → Book / Visit */}
           <div className="flex items-center gap-2">
             <div ref={menuRef} className="sm:relative">
               <button
@@ -235,7 +229,6 @@ export default function Layout() {
 
               {menuOpen && (
                 <div className="absolute left-0 right-0 top-full max-h-[70vh] overflow-y-auto border-y border-white/10 bg-panel shadow-xl sm:left-auto sm:right-0 sm:w-64 sm:border">
-                  {/* On small screens the 7 main links aren't in the header, so show them here */}
                   <div className="xl:hidden">
                     {mainLinks.map((item) => (
                       <NavLink
@@ -412,6 +405,9 @@ export default function Layout() {
           </div>
         </footer>
       )}
+
+      {/* Public floating Help Terminal - only on public pages */}
+      {!isAdmin && <PublicHelpTerminal />}
     </div>
   );
 }

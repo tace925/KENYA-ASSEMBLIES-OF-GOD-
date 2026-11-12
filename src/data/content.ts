@@ -98,6 +98,7 @@ export const navMain = [
   { to: "/notices", label: "Notices" },
   { to: "/wall", label: "Katoloni Wall" },
   { to: "/booking", label: "Booking" },
+  { to: "/appointments", label: "Appointments" },   // ← ADDED
   { to: "/library", label: "Library" },
   { to: "/gallery", label: "Gallery" },
   { to: "/contact", label: "Contact" },
